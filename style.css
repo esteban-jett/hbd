@@ -1,0 +1,682 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    background: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.game-container {
+    text-align: center;
+    width: 90%;
+    max-width: 850px;
+}
+
+.ui-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.instructions {
+    background: #2d2d44;
+    padding: 12px 20px;
+    border: 4px solid #4a4a6a;
+    font-size: 12px;
+    color: #fff;
+    flex: 1;
+    text-align: left;
+}
+
+.progress {
+    background: #2d2d44;
+    padding: 12px 20px;
+    border: 4px solid #4a4a6a;
+    font-size: 12px;
+    color: #ffd700;
+    white-space: nowrap;
+}
+
+#collectedCount {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.game-area {
+    width: 100%;
+    height: 700px;
+    background-image: url('grassy bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 8px solid #2d2d44;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 4px #4a4a6a, 0 8px 30px rgba(0, 0, 0, 0.8);
+}
+
+/* Character styling */
+.character {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    z-index: 100;
+    bottom: 320px;
+    left: 50px;
+    transition: none;
+}
+
+.char-sprite {
+    width: 80px;
+    height: 80px;
+    background-image: url('2d_character_no_bg.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    animation: pixelBounce 0.6s ease-in-out infinite;
+}
+
+@keyframes pixelBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Interactive objects */
+.object {
+    position: absolute;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.object-sprite {
+    font-size: 50px;
+    filter: drop-shadow(3px 3px 0px rgba(0, 0, 0, 0.3));
+    animation: objectFloat 3s ease-in-out infinite;
+}
+
+.object-name {
+    font-size: 10px;
+    color: #2d2d44;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border: 2px solid #2d2d44;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+@keyframes objectFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.object:hover .object-sprite {
+    transform: scale(1.1);
+}
+
+.object.collected .object-sprite {
+    opacity: 0.3;
+    filter: grayscale(100%);
+    animation: none;
+}
+
+.object.collected .object-name {
+    opacity: 0.5;
+}
+
+.object.nearby {
+    animation: objectPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes objectPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.interact-btn {
+    position: absolute;
+    background: #ffd700;
+    color: #2d2d44;
+    border: 4px solid #2d2d44;
+    padding: 10px 20px;
+    font-size: 11px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    cursor: pointer;
+    animation: pixelPulse 1s ease infinite;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    text-transform: uppercase;
+}
+
+@keyframes pixelPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.5);
+    }
+}
+
+.interact-btn:hover {
+    background: #ffed4e;
+}
+
+.interact-btn:active {
+    transform: scale(0.95);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+}
+
+.letters-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 200;
+}
+
+.letter {
+    position: absolute;
+    font-size: 42px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #ffd700;
+    text-shadow:
+        4px 4px 0px #2d2d44,
+        -2px -2px 0px rgba(255, 255, 255, 0.3);
+    animation: pixelFlyOut 1.5s ease-out forwards;
+    opacity: 0;
+}
+
+.letter.space {
+    width: 30px;
+}
+
+@keyframes pixelFlyOut {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.3);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translate(var(--dx), var(--dy)) scale(1.4);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(var(--final-x), var(--final-y)) scale(1);
+    }
+}
+
+.message {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #ffd700;
+    text-shadow: 2px 2px 0px #2d2d44;
+    min-height: 40px;
+    padding: 15px;
+    background: #2d2d44;
+    border: 4px solid #4a4a6a;
+}
+
+/* Confetti effect */
+.confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    animation: pixelConfettiFall 2.5s linear forwards;
+    z-index: 150;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pixelConfettiFall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(600px) translateX(var(--dx)) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Particle effect when collecting */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffd700;
+    border: 2px solid #2d2d44;
+    animation: pixelParticle 1s ease-out forwards;
+    z-index: 120;
+}
+
+@keyframes pixelParticle {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(var(--px), var(--py)) scale(0);
+    }
+}
+
+
+/* NPC Styling */
+.npc {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 110;
+    transition: all 0.3s ease;
+}
+
+.npc-sprite {
+    font-size: 50px;
+    animation: pixelBounce 0.8s ease-in-out infinite;
+}
+
+.npc-bubble {
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    color: #2d2d44;
+    padding: 10px 15px;
+    border: 3px solid #2d2d44;
+    border-radius: 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+    animation: bubbleBounce 0.3s ease;
+}
+
+.npc-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #2d2d44;
+}
+
+@keyframes bubbleBounce {
+    0% {
+        transform: translateX(-50%) scale(0);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.1);
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+/* Locked house indicator */
+.house.locked .object-sprite {
+    filter: grayscale(50%) brightness(0.8);
+}
+
+/* Collected letters display */
+.collected-letters {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #ffd700;
+    text-shadow: 2px 2px 0px #2d2d44;
+    letter-spacing: 4px;
+    z-index: 150;
+}
+
+/* Flying letter animation */
+.flying-letter {
+    position: absolute;
+    font-size: 48px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #ffd700;
+    text-shadow: 3px 3px 0px #2d2d44;
+    z-index: 200;
+    pointer-events: none;
+    transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: letterGlow 0.5s ease infinite;
+}
+
+@keyframes letterGlow {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.5);
+    }
+}
+
+/* Special effect animations */
+@keyframes flyAway {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(100px, -200px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-15deg);
+    }
+
+    75% {
+        transform: rotate(15deg);
+    }
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-150px);
+        opacity: 0;
+    }
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
+}
+
+/* Sparkle effect */
+.sparkle {
+    position: absolute;
+    font-size: 24px;
+    z-index: 130;
+    pointer-events: none;
+    animation: sparkleEffect 1s ease-out forwards;
+}
+
+@keyframes sparkleEffect {
+    0% {
+        opacity: 1;
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+/* Heart particle effect */
+.heart-particle {
+    position: absolute;
+    font-size: 20px;
+    z-index: 130;
+    pointer-events: none;
+    animation: heartFloat 2s ease-out forwards;
+}
+
+@keyframes heartFloat {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1);
+    }
+}
+
+/* Final Scene Overlay */
+.final-scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.final-content {
+    text-align: center;
+    color: white;
+    z-index: 1001;
+}
+
+.final-title {
+    font-size: 72px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #ffd700;
+    text-shadow: 4px 4px 0px #2d2d44;
+    margin-bottom: 30px;
+    animation: titleBounce 0.8s ease;
+}
+
+@keyframes titleBounce {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.final-message {
+    font-size: 24px;
+    margin-bottom: 50px;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+}
+
+.final-gift {
+    margin: 40px 0;
+}
+
+.gift-box {
+    font-size: 100px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    animation: giftBounce 1s ease infinite;
+}
+
+@keyframes giftBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes giftOpen {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.3) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1.5) rotate(0deg);
+    }
+}
+
+.gift-prompt {
+    font-size: 18px;
+    color: #ffd700;
+    text-shadow: 2px 2px 0px #2d2d44;
+    animation: pulseGlow 1.5s ease infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.personal-message {
+    margin-top: 40px;
+    font-size: 20px;
+    line-height: 1.8;
+    max-width: 600px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 4px solid #ffd700;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Final confetti */
+.final-confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    animation: finalConfettiFall 4s linear forwards;
+    z-index: 1000;
+}
+
+@keyframes finalConfettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(var(--fall-distance)) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .final-title {
+        font-size: 36px;
+    }
+
+    .final-message {
+        font-size: 18px;
+    }
+
+    .gift-box {
+        font-size: 80px;
+    }
+
+    .personal-message {
+        font-size: 16px;
+        padding: 20px;
+    }
+}

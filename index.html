@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Adventure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="ui-top">
+            <div class="instructions">
+                <span id="questText">🎮 Something special is hidden around the garden... Find the pieces and discover
+                    the message.</span>
+            </div>
+            <div class="progress">
+                <span id="collectedCount">0</span> / 13 letters
+            </div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <!-- Character -->
+            <div class="character" id="character">
+                <div class="char-sprite"></div>
+            </div>
+
+            <!-- Interactive objects -->
+            <div class="object flower" data-letter="H" data-position="0" data-collected="false"
+                style="left: 120px; top: 80px;">
+                <div class="object-sprite">🌷</div>
+                <div class="object-name">Flower</div>
+            </div>
+
+            <div class="object tree" data-letter="A" data-position="1" data-collected="false"
+                style="left: 380px; top: 60px;">
+                <div class="object-sprite">🌳</div>
+                <div class="object-name">Tree</div>
+            </div>
+
+            <div class="object butterfly" data-letter="P" data-position="2" data-collected="false"
+                style="left: 220px; top: 180px;">
+                <div class="object-sprite">🦋</div>
+                <div class="object-name">Butterfly</div>
+            </div>
+
+            <div class="object crown" data-letter="P" data-position="3" data-collected="false"
+                style="left: 580px; top: 140px;">
+                <div class="object-sprite">👑</div>
+                <div class="object-name">Crown</div>
+            </div>
+
+            <div class="object star" data-letter="Y" data-position="4" data-collected="false"
+                style="left: 80px; top: 280px;">
+                <div class="object-sprite">⭐</div>
+                <div class="object-name">Star</div>
+            </div>
+
+            <div class="object gift" data-letter="B" data-position="6" data-collected="false"
+                style="left: 520px; top: 280px;">
+                <div class="object-sprite">🎁</div>
+                <div class="object-name">Gift</div>
+            </div>
+
+            <div class="object cake" data-letter="I" data-position="7" data-collected="false"
+                style="left: 720px; top: 340px;">
+                <div class="object-sprite">🎂</div>
+                <div class="object-name">Cake</div>
+            </div>
+
+            <div class="object diamond" data-letter="R" data-position="8" data-collected="false"
+                style="left: 420px; top: 420px;">
+                <div class="object-sprite">💎</div>
+                <div class="object-name">Diamond</div>
+            </div>
+
+            <div class="object rainbow" data-letter="T" data-position="9" data-collected="false"
+                style="left: 320px; top: 540px;">
+                <div class="object-sprite">🌈</div>
+                <div class="object-name">Rainbow</div>
+            </div>
+
+            <div class="object balloon" data-letter="H" data-position="10" data-collected="false"
+                style="left: 100px; top: 500px;">
+                <div class="object-sprite">🎈</div>
+                <div class="object-name">Balloon</div>
+            </div>
+
+            <div class="object sun" data-letter="D" data-position="11" data-collected="false"
+                style="left: 560px; top: 500px;">
+                <div class="object-sprite">☀️</div>
+                <div class="object-name">Sun</div>
+            </div>
+
+            <div class="object heart" data-letter="A" data-position="12" data-collected="false"
+                style="left: 730px; top: 560px;">
+                <div class="object-sprite">💝</div>
+                <div class="object-name">Heart</div>
+            </div>
+
+            <div class="object mushroom" data-letter="Y" data-position="13" data-collected="false"
+                style="left: 280px; top: 320px;">
+                <div class="object-sprite">🍄</div>
+                <div class="object-name">Mushroom</div>
+            </div>
+
+            <!-- House - Final destination (locked initially) -->
+            <div class="object house locked" data-letter="" data-collected="false" style="left: 680px; top: 100px;">
+                <div class="object-sprite">🏠</div>
+                <div class="object-name">House 🔒</div>
+            </div>
+
+            <!-- NPC Character -->
+            <div class="npc" id="npc" style="left: 650px; top: 180px;">
+                <div class="npc-sprite">🧙</div>
+                <div class="npc-bubble" id="npcBubble" style="display: none;">
+                    <span id="npcText">You're looking for something?</span>
+                </div>
+            </div>
+
+            <!-- Interaction prompt -->
+            <button class="interact-btn" id="interactBtn" style="display: none;">
+                Press SPACE
+            </button>
+
+            <!-- Letters container for final animation -->
+            <div class="letters-container" id="lettersContainer"></div>
+
+            <!-- Collected letters display -->
+            <div class="collected-letters" id="collectedLettersDisplay"></div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <!-- Final Scene Overlay -->
+        <div class="final-scene" id="finalScene" style="display: none;">
+            <div class="final-content">
+                <h1 class="final-title">HAPPY BIRTHDAY!</h1>
+                <p class="final-message">I hope you have an amazing day! ❤️</p>
+                <div class="final-gift">
+                    <div class="gift-box" id="finalGift">🎁</div>
+                    <p class="gift-prompt">Press SPACE to open your present</p>
+                </div>
+                <div class="personal-message" id="personalMessage" style="display: none;">
+                    <p>🎉 Wishing you a year filled with joy, laughter, and endless adventures! 🎉</p>
+                    <p>May all your dreams come true! ✨</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
