@@ -4,18 +4,105 @@
     box-sizing: border-box;
 }
 
+html {
+    width: 100%;
+    min-height: 100%;
+}
+
 body {
     font-family: 'Press Start 2P', 'Courier New', monospace;
-    background: #1a1a2e;
+    background: #DEA193;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
 }
+
+
+/* =========================================
+   START SCREEN
+   ========================================= */
+
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #DEA193;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.5s ease;
+}
+
+.start-title {
+    font-size: 120px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #FFFDD0;
+    text-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
+    margin-bottom: 60px;
+    animation: titlePulse 2s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.start-button {
+    background: #FFFDD0;
+    color: #DEA193;
+    border: 6px solid #DEA193;
+    padding: 20px 60px;
+    font-size: 24px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    cursor: pointer;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+    transition: all 0.1s ease;
+    text-transform: uppercase;
+    animation: buttonGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes buttonGlow {
+
+    0%,
+    100% {
+        box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+    }
+
+    50% {
+        box-shadow: 8px 8px 20px rgba(255, 253, 208, 0.4);
+    }
+}
+
+.start-button:hover {
+    background: #fff;
+    transform: scale(1.05);
+}
+
+.start-button:active {
+    transform: scale(0.95);
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+
+
+/* =========================================
+   GAME CONTAINER
+   ========================================= */
 
 .game-container {
     text-align: center;
@@ -31,14 +118,17 @@ body {
     gap: 15px;
 }
 
-.instructions {
+.message-display {
     background: #2d2d44;
-    padding: 12px 20px;
+    padding: 15px 25px;
     border: 4px solid #4a4a6a;
-    font-size: 12px;
-    color: #fff;
+    font-size: 16px;
+    color: #ffd700;
     flex: 1;
     text-align: left;
+    min-height: 60px;
+    display: none;
+    line-height: 1.5;
 }
 
 .progress {
@@ -55,6 +145,11 @@ body {
     font-weight: bold;
 }
 
+
+/* =========================================
+   GAME AREA
+   ========================================= */
+
 .game-area {
     width: 100%;
     height: 700px;
@@ -65,10 +160,16 @@ body {
     border: 8px solid #2d2d44;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 0 4px #4a4a6a, 0 8px 30px rgba(0, 0, 0, 0.8);
+    box-shadow:
+        0 0 0 4px #4a4a6a,
+        0 8px 30px rgba(0, 0, 0, 0.8);
 }
 
-/* Character styling */
+
+/* =========================================
+   CHARACTER
+   ========================================= */
+
 .character {
     position: absolute;
     width: 80px;
@@ -80,9 +181,9 @@ body {
 }
 
 .char-sprite {
-    width: 80px;
-    height: 80px;
-    background-image: url('2d_character_no_bg.png');
+    width: 70px;
+    height: 70px;
+    background-image: url('chona-felice.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -102,7 +203,11 @@ body {
     }
 }
 
-/* Interactive objects */
+
+/* =========================================
+   INTERACTIVE OBJECTS
+   ========================================= */
+
 .object {
     position: absolute;
     text-align: center;
@@ -168,6 +273,11 @@ body {
     }
 }
 
+
+/* =========================================
+   INTERACTION BUTTON
+   ========================================= */
+
 .interact-btn {
     position: absolute;
     background: #ffd700;
@@ -206,6 +316,11 @@ body {
     box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
 
+
+/* =========================================
+   LETTERS
+   ========================================= */
+
 .letters-container {
     position: absolute;
     width: 100%;
@@ -233,6 +348,7 @@ body {
 }
 
 @keyframes pixelFlyOut {
+
     0% {
         opacity: 1;
         transform: translate(0, 0) scale(0.3);
@@ -249,6 +365,11 @@ body {
     }
 }
 
+
+/* =========================================
+   MESSAGE
+   ========================================= */
+
 .message {
     margin-top: 20px;
     font-size: 16px;
@@ -260,7 +381,11 @@ body {
     border: 4px solid #4a4a6a;
 }
 
-/* Confetti effect */
+
+/* =========================================
+   CONFETTI
+   ========================================= */
+
 .confetti {
     position: absolute;
     width: 12px;
@@ -271,6 +396,7 @@ body {
 }
 
 @keyframes pixelConfettiFall {
+
     0% {
         transform: translateY(0) translateX(0) rotate(0deg);
         opacity: 1;
@@ -282,7 +408,11 @@ body {
     }
 }
 
-/* Particle effect when collecting */
+
+/* =========================================
+   PARTICLES
+   ========================================= */
+
 .particle {
     position: absolute;
     width: 8px;
@@ -294,6 +424,7 @@ body {
 }
 
 @keyframes pixelParticle {
+
     0% {
         opacity: 1;
         transform: translate(0, 0) scale(1);
@@ -306,83 +437,78 @@ body {
 }
 
 
-/* NPC Styling */
-.npc {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    z-index: 110;
-    transition: all 0.3s ease;
-}
+/* =========================================
+   COLLECTED LETTERS DISPLAY
+   ========================================= */
 
-.npc-sprite {
-    font-size: 50px;
-    animation: pixelBounce 0.8s ease-in-out infinite;
-}
-
-.npc-bubble {
+.collected-letters {
     position: absolute;
-    bottom: 70px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: white;
-    color: #2d2d44;
-    padding: 10px 15px;
-    border: 3px solid #2d2d44;
-    border-radius: 10px;
-    font-size: 11px;
+    font-size: 20px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #ffd700;
+    text-shadow: 3px 3px 0px #2d2d44;
+    letter-spacing: 6px;
+    z-index: 150;
+    background: rgba(45, 45, 68, 0.9);
+    padding: 15px 35px;
+    border: 4px solid #4a4a6a;
     white-space: nowrap;
-    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
-    animation: bubbleBounce 0.3s ease;
+    max-width: 95%;
+    overflow: visible;
 }
 
-.npc-bubble::after {
-    content: '';
+
+/* =========================================
+   END BUTTON
+   ========================================= */
+
+.end-button {
     position: absolute;
-    bottom: -10px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #2d2d44;
+    transform: translate(-50%, -50%);
+    background: #00ff00;
+    color: #2d2d44;
+    border: 6px solid #2d2d44;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.5);
+    z-index: 160;
+    text-transform: uppercase;
+    animation: endButtonPulse 1s ease-in-out infinite;
 }
 
-@keyframes bubbleBounce {
-    0% {
-        transform: translateX(-50%) scale(0);
+@keyframes endButtonPulse {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
     }
 
     50% {
-        transform: translateX(-50%) scale(1.1);
-    }
-
-    100% {
-        transform: translateX(-50%) scale(1);
+        transform: translate(-50%, -50%) scale(1.05);
     }
 }
 
-/* Locked house indicator */
-.house.locked .object-sprite {
-    filter: grayscale(50%) brightness(0.8);
+.end-button:hover {
+    background: #4dff4d;
 }
 
-/* Collected letters display */
-.collected-letters {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    font-family: 'Press Start 2P', 'Courier New', monospace;
-    color: #ffd700;
-    text-shadow: 2px 2px 0px #2d2d44;
-    letter-spacing: 4px;
-    z-index: 150;
+.end-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
 }
 
-/* Flying letter animation */
+
+/* =========================================
+   FLYING LETTER
+   ========================================= */
+
 .flying-letter {
     position: absolute;
     font-size: 48px;
@@ -407,8 +533,13 @@ body {
     }
 }
 
-/* Special effect animations */
+
+/* =========================================
+   SPECIAL EFFECTS
+   ========================================= */
+
 @keyframes flyAway {
+
     0% {
         transform: translate(0, 0) rotate(0deg);
         opacity: 1;
@@ -437,6 +568,7 @@ body {
 }
 
 @keyframes floatUp {
+
     0% {
         transform: translateY(0);
         opacity: 1;
@@ -462,7 +594,11 @@ body {
     }
 }
 
-/* Sparkle effect */
+
+/* =========================================
+   SPARKLE
+   ========================================= */
+
 .sparkle {
     position: absolute;
     font-size: 24px;
@@ -472,6 +608,7 @@ body {
 }
 
 @keyframes sparkleEffect {
+
     0% {
         opacity: 1;
         transform: scale(0);
@@ -488,7 +625,11 @@ body {
     }
 }
 
-/* Heart particle effect */
+
+/* =========================================
+   HEART PARTICLES
+   ========================================= */
+
 .heart-particle {
     position: absolute;
     font-size: 20px;
@@ -498,6 +639,7 @@ body {
 }
 
 @keyframes heartFloat {
+
     0% {
         opacity: 1;
         transform: translateY(0) scale(0.5);
@@ -509,35 +651,91 @@ body {
     }
 }
 
-/* Final Scene Overlay */
+
+/* =========================================
+   FINAL SCENE
+   ========================================= */
+
 .final-scene {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
+
     width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100dvh;
+
+    background: #DEA193;
+
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+
     z-index: 1000;
+
     opacity: 0;
+
     transition: opacity 1s ease;
+
+    /* IMPORTANT:
+       allows the entire birthday message
+       to be viewed on short screens */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 30px 15px;
 }
+
+
+/* =========================================
+   FINAL CONTENT
+   ========================================= */
 
 .final-content {
+    width: 100%;
+    max-width: 900px;
+
+    margin: auto;
+
     text-align: center;
-    color: white;
+
+    color: #FFFDD0;
+
     z-index: 1001;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 20px 0 40px;
 }
 
+
+/* =========================================
+   FINAL TITLE
+   ========================================= */
+
 .final-title {
-    font-size: 72px;
+    width: 100%;
+
+    font-size: clamp(24px, 5vw, 56px);
+
     font-family: 'Press Start 2P', 'Courier New', monospace;
-    color: #ffd700;
-    text-shadow: 4px 4px 0px #2d2d44;
-    margin-bottom: 30px;
+
+    color: #FFFDD0;
+
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+
+    margin: 0 0 25px;
+
     animation: titleBounce 0.8s ease;
+
+    text-align: center;
+
+    line-height: 1.4;
+
+    overflow-wrap: break-word;
+    word-break: normal;
+
+    padding: 0 10px;
 }
 
 @keyframes titleBounce {
@@ -548,25 +746,69 @@ body {
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
 }
 
+
+/* =========================================
+   FINAL MESSAGE
+   ========================================= */
+
 .final-message {
-    font-size: 24px;
-    margin-bottom: 50px;
-    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+    width: 100%;
+
+    font-size: clamp(14px, 2.5vw, 24px);
+
+    line-height: 1.6;
+
+    margin: 0 0 25px;
+
+    padding: 0 15px;
+
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+
+    color: #FFFDD0;
+
+    text-align: center;
+
+    overflow-wrap: break-word;
 }
 
+
+/* =========================================
+   FINAL GIFT
+   ========================================= */
+
 .final-gift {
-    margin: 40px 0;
+    width: 100%;
+
+    margin: 10px 0 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .gift-box {
-    font-size: 100px;
-    margin-bottom: 20px;
+    font-size: clamp(60px, 10vw, 100px);
+
+    margin-bottom: 15px;
+
     cursor: pointer;
+
     animation: giftBounce 1s ease infinite;
+}
+
+.opened-gift {
+    width: min(200px, 45vw);
+    height: min(200px, 45vw);
+
+    margin: 0 auto 15px;
+
+    display: block;
+
+    object-fit: contain;
 }
 
 @keyframes giftBounce {
@@ -582,6 +824,7 @@ body {
 }
 
 @keyframes giftOpen {
+
     0% {
         transform: scale(1) rotate(0deg);
     }
@@ -595,11 +838,27 @@ body {
     }
 }
 
+
+/* =========================================
+   GIFT PROMPT
+   ========================================= */
+
 .gift-prompt {
-    font-size: 18px;
-    color: #ffd700;
-    text-shadow: 2px 2px 0px #2d2d44;
+    font-size: clamp(10px, 2vw, 18px);
+
+    line-height: 1.6;
+
+    padding: 0 15px;
+
+    color: #FFFDD0;
+
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+
     animation: pulseGlow 1.5s ease infinite;
+
+    text-align: center;
+
+    overflow-wrap: break-word;
 }
 
 @keyframes pulseGlow {
@@ -614,19 +873,47 @@ body {
     }
 }
 
+
+/* =========================================
+   PERSONAL MESSAGE
+   ========================================= */
+
 .personal-message {
-    margin-top: 40px;
-    font-size: 20px;
+    width: min(600px, 92%);
+
+    margin: 20px auto 0;
+
+    font-size: clamp(11px, 2vw, 20px);
+
     line-height: 1.8;
-    max-width: 600px;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 4px solid #ffd700;
+
+    padding: clamp(15px, 3vw, 30px);
+
+    background: rgba(255, 253, 208, 0.2);
+
+    border: 4px solid #FFFDD0;
+
     border-radius: 15px;
+
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    color: #FFFDD0;
+
+    text-align: center;
+
+    overflow-wrap: break-word;
+}
+
+.personal-message p {
+    margin-bottom: 12px;
+}
+
+.personal-message p:last-child {
+    margin-bottom: 0;
 }
 
 @keyframes fadeInUp {
+
     0% {
         opacity: 0;
         transform: translateY(30px);
@@ -638,7 +925,11 @@ body {
     }
 }
 
-/* Final confetti */
+
+/* =========================================
+   FINAL CONFETTI
+   ========================================= */
+
 .final-confetti {
     position: absolute;
     width: 10px;
@@ -650,6 +941,7 @@ body {
 }
 
 @keyframes finalConfettiFall {
+
     0% {
         transform: translateY(0) rotate(0deg);
         opacity: 1;
@@ -661,22 +953,575 @@ body {
     }
 }
 
-/* Responsive adjustments */
+
+/* =========================================
+   RESPONSIVE - 1200px
+   ========================================= */
+
+@media (max-width: 1200px) {
+
+    .game-container {
+        max-width: 95%;
+    }
+
+    .game-area {
+        height: 600px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE - 900px
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .game-area {
+        height: 500px;
+    }
+
+    .object-sprite {
+        font-size: 40px;
+    }
+
+    .object-name {
+        font-size: 8px;
+    }
+
+    .collected-letters {
+        font-size: 16px;
+        letter-spacing: 5px;
+        padding: 10px 25px;
+    }
+
+    .message-display {
+        font-size: 14px;
+        padding: 12px 18px;
+    }
+
+    .character {
+        width: 60px;
+        height: 60px;
+    }
+
+    .char-sprite {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE - 768px
+   ========================================= */
+
 @media (max-width: 768px) {
-    .final-title {
-        font-size: 36px;
-    }
 
-    .final-message {
-        font-size: 18px;
-    }
-
-    .gift-box {
+    .start-title {
         font-size: 80px;
     }
 
+    .start-button {
+        font-size: 18px;
+        padding: 15px 40px;
+    }
+
+    .game-area {
+        height: 450px;
+    }
+
+    .ui-top {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message-display {
+        font-size: 12px;
+        min-height: 50px;
+    }
+
+    .progress {
+        font-size: 11px;
+        padding: 10px 15px;
+    }
+
+    .object-sprite {
+        font-size: 35px;
+    }
+
+    .collected-letters {
+        font-size: 14px;
+        letter-spacing: 3px;
+        padding: 8px 18px;
+    }
+
+    .end-button {
+        font-size: 14px;
+        padding: 12px 30px;
+    }
+
+    .interact-btn {
+        font-size: 10px;
+        padding: 8px 16px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE - 768px FINAL SCREEN
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .final-scene {
+        padding: 20px 12px;
+        align-items: flex-start;
+    }
+
+    .final-content {
+        width: 100%;
+        max-width: 600px;
+        padding: 20px 0 40px;
+    }
+
+    .final-title {
+        font-size: clamp(20px, 7vw, 32px);
+        line-height: 1.5;
+        margin-bottom: 18px;
+        padding: 0 5px;
+    }
+
+    .final-message {
+        font-size: clamp(12px, 4vw, 18px);
+        line-height: 1.6;
+        margin-bottom: 15px;
+        padding: 0 10px;
+    }
+
+    .final-gift {
+        margin: 10px 0 15px;
+    }
+
+    .gift-box {
+        font-size: clamp(55px, 18vw, 80px);
+    }
+
+    .opened-gift {
+        width: min(150px, 45vw);
+        height: min(150px, 45vw);
+    }
+
+    .gift-prompt {
+        font-size: clamp(9px, 3vw, 14px);
+        line-height: 1.6;
+    }
+
     .personal-message {
-        font-size: 16px;
+        width: 92%;
+        font-size: clamp(10px, 3.5vw, 16px);
+        line-height: 1.8;
+        padding: 18px 15px;
+        border-width: 3px;
+        border-radius: 10px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE - 600px
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
+        align-items: flex-start;
+    }
+
+
+    /* -------------------------
+       START SCREEN
+       ------------------------- */
+
+    .start-screen {
         padding: 20px;
+        text-align: center;
+    }
+
+    .start-title {
+        font-size: clamp(36px, 14vw, 60px);
+        margin-bottom: 35px;
+    }
+
+    .start-button {
+        font-size: 14px;
+        padding: 14px 28px;
+    }
+
+
+    /* -------------------------
+       GAME CONTAINER
+       ------------------------- */
+
+    .game-container {
+        width: 94%;
+        max-width: none;
+        margin: 20px auto;
+    }
+
+    .ui-top {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .progress {
+        font-size: 9px;
+        padding: 8px 10px;
+    }
+
+
+    /* -------------------------
+       GAME AREA
+       ------------------------- */
+
+    .game-area {
+        width: 100%;
+        height: 70vh;
+        min-height: 400px;
+        max-height: 550px;
+        border: 4px solid #2d2d44;
+    }
+
+
+    /* -------------------------
+       CHARACTER
+       ------------------------- */
+
+    .character {
+        width: 45px;
+        height: 45px;
+        left: 20px !important;
+        bottom: 120px;
+    }
+
+    .char-sprite {
+        width: 45px;
+        height: 45px;
+    }
+
+
+    /* -------------------------
+       MOBILE OBJECT POSITIONS
+       ------------------------- */
+
+    .flower {
+        left: 8% !important;
+        top: 8% !important;
+    }
+
+    .tree {
+        left: 42% !important;
+        top: 8% !important;
+    }
+
+    .butterfly {
+        left: 75% !important;
+        top: 8% !important;
+    }
+
+    .crown {
+        left: 42% !important;
+        top: 25% !important;
+    }
+
+    .star {
+        left: 8% !important;
+        top: 25% !important;
+    }
+
+    .gift {
+        left: 75% !important;
+        top: 25% !important;
+    }
+
+    .cake {
+        left: 8% !important;
+        top: 43% !important;
+    }
+
+    .diamond {
+        left: 75% !important;
+        top: 43% !important;
+    }
+
+    .rainbow {
+        left: 5% !important;
+        top: 62% !important;
+    }
+
+    .balloon {
+        left: 25% !important;
+        top: 62% !important;
+    }
+
+    .sun {
+        left: 43% !important;
+        top: 62% !important;
+    }
+
+    .heart {
+        left: 61% !important;
+        top: 62% !important;
+    }
+
+    .mushroom {
+        left: 78% !important;
+        top: 62% !important;
+    }
+
+
+    /* -------------------------
+       MOBILE OBJECT SIZES
+       ------------------------- */
+
+    .object-sprite {
+        font-size: 28px;
+    }
+
+    .object-name {
+        font-size: 7px;
+        padding: 3px 5px;
+        white-space: nowrap;
+    }
+
+
+    /* -------------------------
+       INTERACTION BUTTON
+       ------------------------- */
+
+    .interact-btn {
+        font-size: 8px;
+        padding: 7px 10px;
+        border-width: 3px;
+        max-width: 90%;
+    }
+
+
+    /* -------------------------
+       COLLECTED LETTERS
+       ------------------------- */
+
+    .collected-letters {
+        max-width: 90%;
+        white-space: normal;
+        text-align: center;
+        font-size: clamp(8px, 2.5vw, 12px);
+        letter-spacing: 2px;
+        padding: 7px 10px;
+        bottom: 8px;
+    }
+
+
+    /* -------------------------
+       END BUTTON
+       ------------------------- */
+
+    .end-button {
+        font-size: 10px;
+        padding: 10px 20px;
+        border-width: 4px;
+        max-width: 80%;
+    }
+
+
+    /* =================================
+       FINAL BIRTHDAY SCREEN
+       ================================= */
+
+    .final-scene {
+        width: 100%;
+        height: 100dvh;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        padding: 10px 8px;
+
+        align-items: flex-start;
+    }
+
+    .final-content {
+        width: 100%;
+        max-width: 600px;
+
+        min-height: auto;
+
+        padding: 15px 0 30px;
+
+        margin: auto;
+    }
+
+    .final-title {
+        width: 100%;
+
+        font-size: clamp(18px, 7vw, 26px);
+
+        line-height: 1.5;
+
+        padding: 0 5px;
+
+        margin-bottom: 15px;
+
+        overflow-wrap: break-word;
+        word-break: normal;
+    }
+
+    .final-message {
+        font-size: clamp(11px, 4vw, 15px);
+
+        line-height: 1.6;
+
+        margin-bottom: 10px;
+
+        padding: 0 10px;
+    }
+
+
+    /* -------------------------
+       GIFT
+       ------------------------- */
+
+    .final-gift {
+        width: 100%;
+
+        margin: 5px 0 15px;
+    }
+
+    .gift-box {
+        font-size: clamp(55px, 18vw, 70px);
+
+        margin-bottom: 8px;
+    }
+
+    .opened-gift {
+        width: min(120px, 40vw);
+        height: min(120px, 40vw);
+
+        margin-bottom: 10px;
+    }
+
+    .gift-prompt {
+        font-size: clamp(8px, 3vw, 12px);
+
+        line-height: 1.7;
+
+        padding: 0 10px;
+    }
+
+
+    /* -------------------------
+       PERSONAL MESSAGE
+       ------------------------- */
+
+    .personal-message {
+        width: 94%;
+
+        max-width: 500px;
+
+        margin-top: 10px;
+
+        font-size: clamp(9px, 3.5vw, 13px);
+
+        line-height: 1.8;
+
+        padding: 15px 10px;
+
+        border-width: 3px;
+
+        border-radius: 10px;
+    }
+
+    .personal-message p {
+        margin-bottom: 12px;
+    }
+
+    .personal-message p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
+
+@media (max-width: 380px) {
+
+    .game-container {
+        width: 96%;
+    }
+
+    .game-area {
+        height: 65vh;
+        min-height: 380px;
+    }
+
+    .object-sprite {
+        font-size: 24px;
+    }
+
+    .object-name {
+        font-size: 6px;
+        padding: 2px 4px;
+    }
+
+    .character,
+    .char-sprite {
+        width: 40px;
+        height: 40px;
+    }
+
+
+    /* FINAL SCREEN */
+
+    .final-scene {
+        padding: 8px 6px;
+    }
+
+    .final-content {
+        padding: 12px 0 25px;
+    }
+
+    .final-title {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .final-message {
+        font-size: 11px;
+    }
+
+    .gift-box {
+        font-size: 55px;
+    }
+
+    .opened-gift {
+        width: 100px;
+        height: 100px;
+    }
+
+    .gift-prompt {
+        font-size: 8px;
+    }
+
+    .personal-message {
+        font-size: 9px;
+        padding: 13px 8px;
     }
 }

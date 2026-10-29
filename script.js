@@ -1,53 +1,78 @@
 // Game state
+const startScreen = document.getElementById('startScreen');
+const startButton = document.getElementById('startButton');
+const gameContainer = document.getElementById('gameContainer');
 const character = document.getElementById('character');
 const interactBtn = document.getElementById('interactBtn');
 const gameArea = document.getElementById('gameArea');
-const lettersContainer = document.getElementById('lettersContainer');
-const message = document.getElementById('message');
+const messageDisplay = document.getElementById('messageDisplay');
 const collectedCountEl = document.getElementById('collectedCount');
-const questText = document.getElementById('questText');
 const collectedLettersDisplay = document.getElementById('collectedLettersDisplay');
-const npc = document.getElementById('npc');
-const npcBubble = document.getElementById('npcBubble');
-const npcText = document.getElementById('npcText');
 const finalScene = document.getElementById('finalScene');
+const endButton = document.getElementById('endButton');
 
-let characterPos = { x: 50, y: 320 };
-let speed = 6;
+// Responsive positioning - calculate based on game area size
+function getGameAreaDimensions() {
+    return {
+        width: gameArea.offsetWidth,
+        height: gameArea.offsetHeight
+    };
+}
+
+let characterPos = { x: 0, y: 0 }; // Will be set in initializeGame
+let speed = 3; // Slower movement
 let nearbyObject = null;
 let collectedLetters = [];
-let totalLetters = 13; // HAPPY BIRTHDAY without space
+let totalLetters = 13;
+let gameStarted = false;
 let gameCompleted = false;
-let currentMessage = '';
-let npcInteracted = false;
+let messageTimeout = null;
+
+// Initialize character position based on game area size
+function initializeGame() {
+    const dims = getGameAreaDimensions();
+    characterPos.x = dims.width / 2 - 40; // Center horizontally
+    characterPos.y = dims.height / 2 - 40; // Center vertically
+    updateCharacterPosition();
+}
 
 // Object data with messages and special effects
 const objectData = {
-    flower: { letter: 'H', message: 'Something beautiful for someone beautiful.' },
-    tree: { letter: 'A', message: 'No matter how much time passes, some things only grow stronger.' },
+    flower: { letter: 'H', message: 'Something beautiful for someone beautiful.', effect: 'hearts' },
+    tree: { letter: 'A', message: 'No matter how much time passes, some things only grow stronger.', effect: 'hearts' },
     butterfly: { letter: 'P', message: 'Wishes take flight...', effect: 'fly' },
-    crown: { letter: 'P', message: 'Today, you\'re the VIP 👑' },
-    star: { letter: 'Y', message: 'You shine brighter than any star ⭐', effect: 'twinkle' },
+    crown: { letter: 'P', message: 'Today, you\'re the VIP 👑', effect: 'sparkle' },
+    star: { letter: 'Y', message: 'You shine brighter than any star ⭐', effect: 'sparkle' },
     gift: { letter: 'B', message: 'A special surprise awaits...', effect: 'shake' },
     cake: { letter: 'I', message: 'Make a wish! 🎂', effect: 'candles' },
     diamond: { letter: 'R', message: 'You\'re a rare gem 💎', effect: 'sparkle' },
     rainbow: { letter: 'T', message: 'After every storm comes color 🌈', effect: 'rainbow' },
     balloon: { letter: 'H', message: 'Let your dreams soar high 🎈', effect: 'float' },
     sun: { letter: 'D', message: 'You brighten everyone\'s day ☀️', effect: 'glow' },
-    heart: { letter: 'A', message: 'Made with love ❤️', effect: 'hearts' },
+    heart: { letter: 'A', message: 'You\'re amazing #1 Fineshyt ❤️', effect: 'hearts' },
     mushroom: { letter: 'Y', message: 'Growing into something amazing 🍄' }
 };
 
+// Start button click handler
+startButton.addEventListener('click', () => {
+    startScreen.style.opacity = '0';
+    setTimeout(() => {
+        startScreen.style.display = 'none';
+        gameContainer.style.display = 'block';
+        gameStarted = true;
+        initializeGame(); // Initialize responsive positions
+        gameLoop();
+    }, 500);
+});
+
 // Get all interactive objects
-const objects = document.querySelectorAll('.object:not(.house)');
-const house = document.querySelector('.house');
+const objects = document.querySelectorAll('.object');
 
 // Update character position
 function updateCharacterPosition() {
     character.style.left = characterPos.x + 'px';
     character.style.bottom = characterPos.y + 'px';
     checkProximityToObjects();
-    checkProximityToNPC();
 }
 
 // Check if character is near any object
@@ -58,7 +83,6 @@ function checkProximityToObjects() {
     let closestObject = null;
     let minDistance = Infinity;
 
-    // Check regular objects
     objects.forEach(obj => {
         if (obj.dataset.collected === 'true') return;
 
@@ -74,23 +98,8 @@ function checkProximityToObjects() {
         }
     });
 
-    // Check house if all letters collected
-    if (collectedLetters.length === totalLetters) {
-        const houseRect = house.getBoundingClientRect();
-        const houseDistance = Math.sqrt(
-            Math.pow(charRect.left + charRect.width / 2 - (houseRect.left + houseRect.width / 2), 2) +
-            Math.pow(charRect.top + charRect.height / 2 - (houseRect.top + houseRect.height / 2), 2)
-        );
-
-        if (houseDistance < 120 && houseDistance < minDistance) {
-            minDistance = houseDistance;
-            closestObject = house;
-        }
-    }
-
     // Remove nearby class from all objects
     objects.forEach(obj => obj.classList.remove('nearby'));
-    house.classList.remove('nearby');
 
     if (closestObject) {
         nearbyObject = closestObject;
@@ -108,58 +117,12 @@ function checkProximityToObjects() {
     }
 }
 
-// Check proximity to NPC
-function checkProximityToNPC() {
-    if (!npc || gameCompleted) return;
-
-    const charRect = character.getBoundingClientRect();
-    const npcRect = npc.getBoundingClientRect();
-
-    const distance = Math.sqrt(
-        Math.pow(charRect.left - npcRect.left, 2) +
-        Math.pow(charRect.top - npcRect.top, 2)
-    );
-
-    if (distance < 150) {
-        showNPCMessage();
-    } else {
-        hideNPCMessage();
-    }
-}
-
-// Show NPC message based on progress
-function showNPCMessage() {
-    const count = collectedLetters.length;
-    let npcMessage = '';
-
-    if (count === 0 && !npcInteracted) {
-        npcMessage = "You're looking for something?";
-        npcInteracted = true;
-    } else if (count > 0 && count < 5) {
-        npcMessage = "Keep exploring!";
-    } else if (count >= 5 && count < 10) {
-        npcMessage = "You're getting close...";
-    } else if (count >= 10 && count < 13) {
-        npcMessage = "Almost there!";
-    } else if (count === 13) {
-        npcMessage = "I think you've found everything.";
-    }
-
-    if (npcMessage) {
-        npcText.textContent = npcMessage;
-        npcBubble.style.display = 'block';
-    }
-}
-
-// Hide NPC message
-function hideNPCMessage() {
-    npcBubble.style.display = 'none';
-}
-
 // Keyboard controls
 const keys = {};
 
 document.addEventListener('keydown', (e) => {
+    if (!gameStarted) return;
+
     keys[e.key] = true;
 
     // Space bar to interact
@@ -184,44 +147,33 @@ document.addEventListener('keyup', (e) => {
 
 // Game loop for movement
 function gameLoop() {
-    if (gameCompleted) {
-        requestAnimationFrame(gameLoop);
-        return;
+    if (!gameStarted) return;
+
+    if (!gameCompleted) {
+        const gameWidth = gameArea.offsetWidth - 80;
+        const gameHeight = gameArea.offsetHeight - 80;
+
+        if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+            characterPos.x = Math.max(0, characterPos.x - speed);
+        }
+        if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+            characterPos.x = Math.min(gameWidth, characterPos.x + speed);
+        }
+        if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+            characterPos.y = Math.min(gameHeight, characterPos.y + speed);
+        }
+        if (keys['ArrowDown'] || keys['s'] || keys['S']) {
+            characterPos.y = Math.max(0, characterPos.y - speed);
+        }
+
+        updateCharacterPosition();
     }
 
-    const gameWidth = gameArea.offsetWidth - 80;
-    const gameHeight = gameArea.offsetHeight - 80;
-
-    if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
-        characterPos.x = Math.max(0, characterPos.x - speed);
-    }
-    if (keys['ArrowRight'] || keys['d'] || keys['D']) {
-        characterPos.x = Math.min(gameWidth, characterPos.x + speed);
-    }
-    if (keys['ArrowUp'] || keys['w'] || keys['W']) {
-        characterPos.y = Math.min(gameHeight, characterPos.y + speed);
-    }
-    if (keys['ArrowDown'] || keys['s'] || keys['S']) {
-        characterPos.y = Math.max(0, characterPos.y - speed);
-    }
-
-    updateCharacterPosition();
     requestAnimationFrame(gameLoop);
 }
 
 // Interact with an object
 function interactWithObject(obj) {
-    // Check if it's the house
-    if (obj.classList.contains('house')) {
-        if (collectedLetters.length === totalLetters) {
-            enterHouse();
-        } else {
-            message.textContent = '🔒 The door is locked... Find all the letters first.';
-            setTimeout(() => message.textContent = '', 3000);
-        }
-        return;
-    }
-
     if (obj.dataset.collected === 'true') return;
 
     const objClass = Array.from(obj.classList).find(c => c !== 'object' && c !== 'nearby');
@@ -235,9 +187,19 @@ function interactWithObject(obj) {
     // Store letter with its position
     collectedLetters.push({ letter: letter, position: position });
 
-    // Show message
-    message.textContent = data.message;
-    setTimeout(() => message.textContent = '', 3000);
+    // Show message for 3 seconds
+    messageDisplay.textContent = data.message;
+    messageDisplay.style.display = 'block';
+
+    // Clear any existing timeout
+    if (messageTimeout) {
+        clearTimeout(messageTimeout);
+    }
+
+    // Hide message after 3 seconds
+    messageTimeout = setTimeout(() => {
+        messageDisplay.style.display = 'none';
+    }, 3000);
 
     // Mark as collected
     obj.dataset.collected = 'true';
@@ -262,12 +224,11 @@ function interactWithObject(obj) {
     // Update progress
     collectedCountEl.textContent = collectedLetters.length;
     updateCollectedDisplay();
-    updateQuestText();
 
     // Check if all letters collected
     if (collectedLetters.length === totalLetters) {
         setTimeout(() => {
-            unlockHouse();
+            showEndButton();
         }, 1500);
     }
 }
@@ -387,18 +348,18 @@ function launchLetter(obj, letter) {
 
     gameArea.appendChild(letterEl);
 
-    // Animate to top of screen
+    // Animate to bottom display
     setTimeout(() => {
-        letterEl.style.transform = 'translate(-50%, -400px) scale(1.5)';
+        letterEl.style.transform = 'translate(-50%, 300px) scale(1.5)';
         letterEl.style.opacity = '0';
     }, 50);
 
     setTimeout(() => letterEl.remove(), 1500);
 }
 
-// Update collected letters display
+// Update collected letters display - single line only
 function updateCollectedDisplay() {
-    // Create array for "HAPPY BIRTHDAY" (14 positions: 0-13)
+    // Create array for "HAPPYBIRTHDAY" (14 positions: 0-13)
     let messageArray = new Array(14).fill('_');
 
     // Fill in letters at their correct positions
@@ -408,59 +369,33 @@ function updateCollectedDisplay() {
         }
     });
 
-    // Format with space between HAPPY and BIRTHDAY
-    let display = '';
-    for (let i = 0; i < messageArray.length; i++) {
-        if (i === 5) display += '   '; // Space between HAPPY and BIRTHDAY
-        display += messageArray[i] + ' ';
-    }
+    // Format as single line - more space between HAPPY and BIRTHDAY
+    let display = messageArray.slice(0, 5).join(' ') + '         ' + messageArray.slice(6).join(' ');
 
     collectedLettersDisplay.textContent = display;
 }
 
-// Update quest text based on progress
-function updateQuestText() {
-    const count = collectedLetters.length;
-
-    if (count === 0) {
-        questText.textContent = '🎮 Something special is hidden around the garden... Find the pieces!';
-    } else if (count < 5) {
-        questText.textContent = `🔍 Keep exploring! ${count} / 13 letters found`;
-    } else if (count < 10) {
-        questText.textContent = `✨ You're doing great! ${count} / 13 letters found`;
-    } else if (count < 13) {
-        questText.textContent = `🎯 Almost there! ${count} / 13 letters found`;
-    } else {
-        questText.textContent = '🎉 All letters collected! Head to the house! 🏠';
-    }
+// Show end button
+function showEndButton() {
+    endButton.style.display = 'block';
 }
 
-// Unlock the house
-function unlockHouse() {
-    house.classList.remove('locked');
-    house.querySelector('.object-name').textContent = 'House 🔓';
-    message.textContent = '✨ The door unlocked! Something magical awaits inside... 🏠';
+// End button click handler
+endButton.addEventListener('click', () => {
+    showFinalScene();
+});
 
-    // Make NPC walk toward house
-    if (npc) {
-        npc.style.transition = 'all 3s ease';
-        npc.style.left = '620px';
-        npc.style.top = '150px';
-    }
-
-    setTimeout(() => message.textContent = '', 4000);
-}
-
-// Enter the house - trigger final scene
-function enterHouse() {
+// Show final scene
+function showFinalScene() {
     gameCompleted = true;
     interactBtn.style.display = 'none';
 
     // Fade out game
-    gameArea.style.transition = 'opacity 1s';
-    gameArea.style.opacity = '0';
+    gameContainer.style.transition = 'opacity 1s';
+    gameContainer.style.opacity = '0';
 
     setTimeout(() => {
+        gameContainer.style.display = 'none';
         finalScene.style.display = 'flex';
         setTimeout(() => {
             finalScene.style.opacity = '1';
@@ -472,6 +407,7 @@ function enterHouse() {
 // Open final gift
 function openFinalGift() {
     const giftBox = document.getElementById('finalGift');
+    const openedGift = document.getElementById('openedGift');
     const personalMessage = document.getElementById('personalMessage');
     const giftPrompt = document.querySelector('.gift-prompt');
 
@@ -479,7 +415,8 @@ function openFinalGift() {
     giftPrompt.style.display = 'none';
 
     setTimeout(() => {
-        giftBox.textContent = '🎊';
+        giftBox.style.display = 'none'; // Hide the gift emoji
+        openedGift.style.display = 'block'; // Show scuba cat gif
         personalMessage.style.display = 'block';
         personalMessage.style.animation = 'fadeInUp 1s ease';
     }, 500);
@@ -511,9 +448,16 @@ interactBtn.addEventListener('click', () => {
     }
 });
 
-// Start the game loop
-gameLoop();
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (gameStarted && !gameCompleted) {
+        // Adjust character position to stay within bounds
+        const dims = getGameAreaDimensions();
+        characterPos.x = Math.min(characterPos.x, dims.width - 80);
+        characterPos.y = Math.min(characterPos.y, dims.height - 80);
+        updateCharacterPosition();
+    }
+});
 
 // Initialize display
 updateCollectedDisplay();
-updateQuestText();
